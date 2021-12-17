@@ -2,20 +2,45 @@ import pygame
 from PIL import Image, ImageSequence
 
 class ImageUtil:
+    gframes = []
+
     def __init__(self, filename):
-        self.filename = filename
+        self.image = Image.open(filename)
+        self.loadGIF()
 
     def loadGIF(self):
-        pilImage = Image.open(self.filename)
         frames = []
-        for frame in ImageSequence.Iterator(pilImage):
+        for frame in ImageSequence.Iterator(self.image):
             pygameImage = self.__pilImageToSurface(frame.convert('RGBA'))
             frames.append(pygameImage)
+        self.gframes = frames
         return frames
 
     def __pilImageToSurface(self, pilImage):
         mode, size, data = pilImage.mode, pilImage.size, pilImage.tobytes()
         return pygame.image.fromstring(data, size, mode).convert_alpha()
+
+    def rotation(self, angle):
+        rotated_images = []
+        for frame in self.gframes:
+            image = pygame.transform.rotate(frame, angle)
+            rotated_images.append(image)
+        self.gframes = rotated_images
+        return rotated_images
+
+    def flip(self):
+        flip_images = []
+        for frame in self.gframes:
+            image = pygame.transform.flip(frame, False, True)
+            flip_images.append(image)
+        self.gframes = flip_images 
+        return flip_images
+
+    def flip_and_rotate(self):
+        self.flip()
+        self.rotation(180)
+        return self.gframes
+
  
 
 ### EXAMPLE ###
@@ -25,7 +50,8 @@ window = pygame.display.set_mode((500, 500))
 clock = pygame.time.Clock()
 
 
-gifFrameList = ImageUtil("my_gif.gif").loadGIF()
+image = ImageUtil("my_gif.gif")
+gifFrameList = image.flip_and_rotate()
 currentFrame = 0
 
 run = True
