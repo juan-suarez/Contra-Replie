@@ -20,7 +20,7 @@ class Bill():
     self.health = 500
     self.pos_x = 50
     self.pos_y = 240
-    self.image = image.ImageUtil(SPRITES+'LanceJumpingR.gif')
+    self.image = image.ImageUtil(SPRITES+'LanceStandingR.png')
     self.frames = self.image.load()
     self.currentFrame = 0
     self.vel_x = 0
@@ -31,10 +31,13 @@ class Bill():
     self.frames = self.image.load()
     self.currentFrame = (self.currentFrame + 1) % len(self.frames)
     des_y = 0
-    if not left:
-      self.last_dir = 0 
-    if left and self.last_dir != -1:
+    if action == 1:
+      des_y = 20
+      if self.last_dir == -1:
+        self.frames = self.image.flip_and_rotate()
+    if left:
       self.frames = self.image.flip_and_rotate()
+      self.last_dir = -1
     if action  == 0:
       des_y = -50
       self.currentFrame = (self.currentFrame + 5) % len(self.frames)
@@ -49,7 +52,7 @@ def main():
   pantalla=pygame.display.set_mode(screen_size)
   pygame.display.set_caption('Contra')
   bill = Bill(image)
-  action,left = 0,0
+  action,left = 2,0
   while run:
     for event in pygame.event.get():
       if event.type == pygame.QUIT : run = False
@@ -57,6 +60,7 @@ def main():
         if event.key == pygame.K_RIGHT:
           action = 3
           left = 0
+          bill.last_dir = 1
         if event.key == pygame.K_LEFT:
           action = 3
           left = 1
@@ -66,10 +70,11 @@ def main():
         if event.key == pygame.K_UP:
           action = 0
           left = 0 
+      else:
+          action = 2
     cargar_mapa(pantalla,pos_x,0)
     bill.update(pantalla,action,left)
     pygame.display.flip()
-    pos_x-=10
     pygame.time.delay(1)
   pygame.quit()
 
