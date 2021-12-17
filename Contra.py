@@ -11,16 +11,24 @@ class Fondo():
     self.pos_x = 0
     self.pos_y = 0
     self.fondo = pygame.image.load('imagenes/mapa/mapa2.png')
-  def update(self,pantalla,bpos_x=0,bpos_y=0,act = False):
+  def update(self,pantalla,bpos_x=0,bpos_y=0,act = True):
     if act:
       mov = 0
-      if bpos_x > 600:
-        self.pos_x = max(self.pos_x - 10, -3750)
+      if bpos_x > 650:
         mov = -1 
-      if bpos_x < 600:
-        self.pos_x = min(self.pos_x + 50, 0)
+        self.pos_x -= 10 
+        if self.pos_x < -3750:
+          self.pos_x = -3750
+          mov = 0
+      if bpos_x < 550:
         mov = 1
+        self.pos_x += 10
+        if self.pos_x > 0:
+          self.pos_x = 0
+          mov = 0
       pantalla.blit(self.fondo,[self.pos_x,self.pos_y])
+      return mov
+    pantalla.blit(self.fondo,[self.pos_x,self.pos_y])
 
 
 SPRITES = "imagenes/sprites/" 
@@ -88,10 +96,11 @@ def main():
       else:
           action = 2
           bill.vel_x = 0
-    fondo.update(pantalla,bill.pos_x,bill.pos_y)
+    mov = fondo.update(pantalla,bill.pos_x,bill.pos_y)
+    bill.pos_x += mov * 4
     bill.update(pantalla,action,left)
     pygame.display.flip()
-    pygame.time.delay(1)
+    pygame.time.delay(5)
   pygame.quit()
 
 main()
