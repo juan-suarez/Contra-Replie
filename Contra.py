@@ -6,10 +6,21 @@ from Utils import image
 screen_size = 1200 , 300
 
 NEGRO=[0,0,0]
-
-def cargar_mapa(pantalla,pos_x=0,pos_y=0):
-  fondo = pygame.image.load('imagenes/mapa/mapa2.png')
-  pantalla.blit(fondo,[pos_x,pos_y])
+class Fondo():
+  def __init__(self):
+    self.pos_x = 0
+    self.pos_y = 0
+    self.fondo = pygame.image.load('imagenes/mapa/mapa2.png')
+  def update(self,pantalla,bpos_x=0,bpos_y=0,act = False):
+    if act:
+      mov = 0
+      if bpos_x > 600:
+        self.pos_x = max(self.pos_x - 10, -3750)
+        mov = -1 
+      if bpos_x < 600:
+        self.pos_x = min(self.pos_x + 50, 0)
+        mov = 1
+      pantalla.blit(self.fondo,[self.pos_x,self.pos_y])
 
 
 SPRITES = "imagenes/sprites/" 
@@ -41,7 +52,8 @@ class Bill():
     if action  == 0:
       des_y = -50
       self.currentFrame = (self.currentFrame + 5) % len(self.frames)
-    pantalla.blit(self.frames[self.currentFrame],[50,des_y+ 240])
+    self.pos_x += self.vel_x
+    pantalla.blit(self.frames[self.currentFrame],[self.pos_x,des_y+ 240])
   
 
 def main():
@@ -51,6 +63,7 @@ def main():
   pygame.init()
   pantalla=pygame.display.set_mode(screen_size)
   pygame.display.set_caption('Contra')
+  fondo = Fondo()
   bill = Bill(image)
   action,left = 2,0
   while run:
@@ -61,9 +74,11 @@ def main():
           action = 3
           left = 0
           bill.last_dir = 1
+          bill.vel_x = 4
         if event.key == pygame.K_LEFT:
           action = 3
           left = 1
+          bill.vel_x = -4
         if event.key == pygame.K_DOWN:
           action = 1
           left = 0
@@ -72,7 +87,8 @@ def main():
           left = 0 
       else:
           action = 2
-    cargar_mapa(pantalla,pos_x,0)
+          bill.vel_x = 0
+    fondo.update(pantalla,bill.pos_x,bill.pos_y)
     bill.update(pantalla,action,left)
     pygame.display.flip()
     pygame.time.delay(1)
