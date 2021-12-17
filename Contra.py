@@ -2,6 +2,7 @@ import pygame
 import random
 #import leerjson
 from Utils import image
+from dron import Dron
 
 screen_size = 1200 , 300
 
@@ -73,7 +74,10 @@ def main():
   pygame.display.set_caption('Contra')
   fondo = Fondo()
   bill = Bill(image)
+  dron = Dron()
   action,left = 2,0
+  clock = 0
+  shot_act = True
   while run:
     for event in pygame.event.get():
       if event.type == pygame.QUIT : run = False
@@ -99,8 +103,16 @@ def main():
     mov = fondo.update(pantalla,bill.pos_x,bill.pos_y)
     bill.pos_x += mov * 4
     bill.update(pantalla,action,left)
+    shoted = dron.update(pantalla, bill.pos_x, bill.pos_y,shot_act)
     pygame.display.flip()
     pygame.time.delay(5)
+    clock += 1
+    if shoted:
+        clock = 0
+        shot_act = False
+    else:
+      if clock >= 100:
+        shot_act = True
   pygame.quit()
 
 main()
