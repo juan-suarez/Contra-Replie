@@ -15,7 +15,7 @@ class ImageUtil:
                 pygameImage = self.__pilImageToSurface(frame.convert('RGBA'))
                 frames.append(pygameImage)
         else:
-            frames.append(self.__pilImageToSurface(self.image))
+            frames.append(self.__pilImageToSurface(self.image.convert('RGBA')))
         self.frames = frames
         return frames
 
@@ -46,6 +46,7 @@ class ImageUtil:
  
 
 ### EXAMPLE ###
+'''
 pygame.init()
 window = pygame.display.set_mode((500, 500))
 clock = pygame.time.Clock()
@@ -68,3 +69,4 @@ while run:
     currentFrame = (currentFrame + 1) % len(gifFrameList)
     
     pygame.display.flip()
+'''
