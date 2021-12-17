@@ -35,6 +35,7 @@ while run:
         if event.type == pygame.QUIT:
             run = False
 
+    window.fill([0, 0, 0])
     rect = gifFrameList[currentFrame].get_rect(center = (250, 250))
     window.blit(gifFrameList[currentFrame], rect)
     currentFrame = (currentFrame + 1) % len(gifFrameList)
